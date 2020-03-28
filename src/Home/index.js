@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   TextInput,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -13,41 +14,7 @@ export default class Home extends React.PureComponent {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../assets/logo.jpeg')}
-            style={styles.logoStyle}
-          />
-        </View>
-        <View style={styles.form}>
-          <View style={styles.row}>
-            <TextInput style={styles.formInput} placeholder="Email" />
-            <Icon color="#ff8100" name="envelope" size={20} />
-          </View>
-          <View style={styles.row}>
-            <TextInput style={styles.formInput} placeholder="Email" />
-            <Icon color="#ff8100" name="key" size={20} />
-          </View>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>SIGN IN</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.buttonRow}>
-            <View style={styles.noButton}>
-              <Text>
-                Not a Member?<Text style={styles.linkText}>{' Sign Up '}</Text>
-                Now
-              </Text>
-            </View>
-          </View>
-          <View style={styles.buttonRow}>
-            <View style={styles.noButton}>
-              <Text style={styles.linkText}>Forgot Password?</Text>
-            </View>
-          </View>
-        </View>
+        <Text>Hello</Text>
       </View>
     );
   }

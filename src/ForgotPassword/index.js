@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   TextInput,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import validateEmail from '../lib';
@@ -39,6 +40,21 @@ export default class ForgotPassword extends React.PureComponent {
           />
         </View>
         <View style={styles.form}>
+          <View style={styles.row}>
+            {mailErrMsg.length > 0 && (
+              <Text style={styles.errStyle}>{mailErrMsg}</Text>
+            )}
+            <View style={styles.inline}>
+              <TextInput
+                ref={input => (this.mail = input)}
+                style={styles.formInput}
+                placeholder="Enter your student ID"
+                onChangeText={this.onMailChange}
+                value={mail}
+              />
+              <Icon color="#ff8100" name="user" size={20} />
+            </View>
+          </View>
           <View style={styles.row}>
             <View style={styles.inline}>
               <TextInput
@@ -88,6 +104,7 @@ const styles = StyleSheet.create({
   formInput: {
     flex: 1,
     fontSize: 16,
+    paddingBottom: Platform.OS === 'android' ? -10 : 2,
   },
   row: {
     borderBottomColor: '#ff8100',
@@ -109,18 +126,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
   },
-  noButton: {
-    width: '100%',
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
   buttonText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: 'bold',
-  },
-  linkText: {
-    color: '#ff8100',
     fontWeight: 'bold',
   },
   inline: {

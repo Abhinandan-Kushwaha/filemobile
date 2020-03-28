@@ -8,26 +8,23 @@ import {
   TextInput,
   Platform,
 } from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import validateEmail from '../lib';
 
-export default class Login extends React.PureComponent {
+export default class ForgotPassword extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       mailErrMsg: '',
-      passErrMsg: '',
       mail: '',
-      password: '',
-      isPassVisible: false,
+      oldPassErrMsg: '',
+      oldPassword: '',
+      isOldPassVisible: false,
+      newPassErrMsg: '',
+      newPassword: '',
+      isNewPassVisible: false,
     };
   }
-
-  onEyePress = () => {
-    const {isPassVisible} = this.state;
-    this.setState({isPassVisible: !isPassVisible});
-  };
 
   onMailChange = mail => {
     this.setState({mail: mail});
@@ -39,33 +36,41 @@ export default class Login extends React.PureComponent {
     }
   };
 
-  onPassChange = password => {
-    this.setState({password: password});
-    if (!password || password.length > 5) {
-      this.setState({passErrMsg: ''});
+  onOldPassChange = oldPassword => {
+    this.setState({oldPassword: oldPassword});
+    if (!oldPassword || oldPassword.length > 5) {
+      this.setState({oldPassErrMsg: ''});
     } else {
-      this.setState({passErrMsg: 'Password should be at least 8 letters long'});
+      this.setState({
+        oldPassErrMsg: 'Password should be at least 8 letters long',
+      });
     }
   };
 
-  onForgotPasswordPress = () => {
-    const {navigation} = this.props;
-    navigation.navigate('ForgotPassword');
-  };
-  onSignUpPress = () => {
-    const {navigation} = this.props;
-    navigation.navigate('SignUp');
+  onNewPassChange = newPassword => {
+    this.setState({newPassword: newPassword});
+    if (!newPassword || newPassword.length > 5) {
+      this.setState({newPassErrMsg: ''});
+    } else {
+      this.setState({
+        newPassErrMsg: 'Password should be at least 8 letters long',
+      });
+    }
   };
 
-  onSignInPress = () => {
-    const {navigation} = this.props;
-    navigation.openDrawer();
-    //navigation.navigate('Home');
-  };
   render() {
-    const {mailErrMsg, passErrMsg, mail, password, isPassVisible} = this.state;
+    const {
+      mailErrMsg,
+      mail,
+      oldPassErrMsg,
+      isOldPassVisible,
+      oldPassword,
+      newPassErrMsg,
+      isNewPassVisible,
+      newPassword,
+    } = this.state;
     return (
-      <KeyboardAwareScrollView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image
             source={require('../../assets/logo.jpeg')}
@@ -81,64 +86,69 @@ export default class Login extends React.PureComponent {
               <TextInput
                 ref={input => (this.mail = input)}
                 style={styles.formInput}
-                placeholder="Student ID"
+                placeholder="Enter your student ID"
                 onChangeText={this.onMailChange}
                 value={mail}
               />
-              <Icon color="#ff8100" name="user-alt" size={20} />
+              <Icon color="#ff8100" name="user" size={20} />
             </View>
           </View>
           <View style={styles.row}>
-            {passErrMsg.length > 0 && (
-              <Text style={styles.errStyle}>{passErrMsg}</Text>
+            {oldPassErrMsg.length > 0 && (
+              <Text style={styles.errStyle}>{oldPassErrMsg}</Text>
             )}
             <View style={styles.inline}>
               <TextInput
-                ref={input => (this.passowrd = input)}
+                ref={input => (this.oldPassword = input)}
                 style={styles.formInput}
                 placeholder="Password"
-                secureTextEntry={!isPassVisible}
-                onChangeText={this.onPassChange}
-                value={password}
+                secureTextEntry={!isOldPassVisible}
+                onChangeText={this.onOldPassChange}
+                value={oldPassword}
               />
               <TouchableOpacity onPress={this.onEyePress}>
                 <Icon
                   style={{marginRight: 10}}
-                  color={password.length > 0 ? 'black' : 'grey'}
-                  name={isPassVisible ? 'eye' : 'eye-slash'}
+                  color={oldPassword.length > 0 ? 'black' : 'grey'}
+                  name={isOldPassVisible ? 'eye' : 'eye-slash'}
                   size={20}
                 />
               </TouchableOpacity>
               <Icon color="#ff8100" name="key" size={20} />
             </View>
           </View>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={this.onSignInPress}>
-              <Text style={styles.buttonText}>SIGN IN</Text>
-            </TouchableOpacity>
+          <View style={styles.row}>
+            {newPassErrMsg.length > 0 && (
+              <Text style={styles.errStyle}>{newPassErrMsg}</Text>
+            )}
+            <View style={styles.inline}>
+              <TextInput
+                ref={input => (this.newPassword = input)}
+                style={styles.formInput}
+                placeholder="Password"
+                secureTextEntry={!isNewPassVisible}
+                onChangeText={this.onPassChange}
+                value={newPassword}
+              />
+              <TouchableOpacity onPress={this.onEyePress}>
+                <Icon
+                  style={{marginRight: 10}}
+                  color={newPassword.length > 0 ? 'black' : 'grey'}
+                  name={isNewPassVisible ? 'eye' : 'eye-slash'}
+                  size={20}
+                />
+              </TouchableOpacity>
+              <Icon color="#ff8100" name="key" size={20} />
+            </View>
           </View>
 
-          <TouchableOpacity
-            style={styles.buttonRow}
-            onPress={this.onSignUpPress}>
-            <View style={styles.noButton}>
-              <Text>
-                Not a Member?<Text style={styles.linkText}>{' Sign Up '}</Text>
-                Now
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonRow}
-            onPress={this.onForgotPasswordPress}>
-            <View style={styles.noButton}>
-              <Text style={styles.linkText}>Forgot Password?</Text>
-            </View>
-          </TouchableOpacity>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>SUBMIT</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </KeyboardAwareScrollView>
+      </View>
     );
   }
 }
@@ -172,7 +182,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginHorizontal: 20,
     paddingHorizontal: 4,
-    marginBottom: 20,
+    paddingBottom: 4,
+    marginBottom: 30,
   },
   buttonRow: {
     flexDirection: 'row',
@@ -186,23 +197,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
   },
-  noButton: {
-    width: '100%',
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
   buttonText: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  linkText: {
-    color: '#ff8100',
-    fontWeight: 'bold',
-  },
   inline: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   errStyle: {
     color: '#ff0000',

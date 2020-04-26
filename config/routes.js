@@ -14,30 +14,71 @@ const HomeStack = createStackNavigator({
     screen: Home,
     navigationOptions: {
       headerStyle: {backgroundColor: '#ff8100'},
-      headerTintColor: '#ffffff',
+      headerTintColor: '#710035',
       headerTitle: 'Self Issueing Master File Shelf',
     },
   },
 });
 
-const AuthStack = createBottomTabNavigator({
+const AuthStack = createStackNavigator({
   Login: {
     screen: Login,
     navigationOptions: {
-      headerTintColor: '#ff5100',
-      headerTitle: 'Self Issueing Master File Shelf',
+      headerTintColor: '#710035',
+      headerTitle: 'KaamBook (मधुर कथाएं)',
     },
   },
   ForgotPassword: {
     screen: ForgotPassword,
-    navigationOptions: {headerTitle: 'Forgot Password'},
+    navigationOptions: {
+      headerTintColor: '#710035',
+      headerTitle: 'KaamBook (मधुर कथाएं)',
+    },
   },
-  SignUp: {screen: SignUp, navigationOptions: {headerTitle: 'Sign Up'}},
+  SignUp: {
+    screen: SignUp,
+    navigationOptions: {
+      headerTintColor: '#710035',
+      headerTitle: 'KaamBook (मधुर कथाएं)',
+    },
+  },
+});
+
+const AppStack = createBottomTabNavigator({
+  Stories: {
+    screen: Home,
+    navigationOptions: {
+      headerStyle: {backgroundColor: '#ff8100'},
+      headerTintColor: '#710035',
+      headerTitle: 'Stories',
+    },
+  },
+  Gallery: {
+    screen: Login,
+    navigationOptions: {
+      headerTintColor: '#710035',
+      headerTitle: 'Gallery',
+    },
+  },
+  Upload: {
+    screen: ForgotPassword,
+    navigationOptions: {
+      headerTintColor: '#710035',
+      headerTitle: 'Upload',
+    },
+  },
+  Profile: {
+    screen: SignUp,
+    navigationOptions: {
+      headerTintColor: '#710035',
+      headerTitle: 'Profile',
+    },
+  },
 });
 
 const FileMobileRoute = createSwitchNavigator({
   Auth: AuthStack,
-  Home: HomeStack,
+  App: AppStack,
 });
 
 const AppContainer = createAppContainer(FileMobileRoute);

@@ -11,6 +11,7 @@ import {
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import validateEmail from '../lib';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default class Login extends React.PureComponent {
   constructor(props) {
@@ -59,7 +60,7 @@ export default class Login extends React.PureComponent {
 
   onSignInPress = () => {
     const {navigation} = this.props;
-    navigation.openDrawer();
+    navigation.navigate('Stories');
     //navigation.navigate('Home');
   };
   render() {
@@ -67,8 +68,12 @@ export default class Login extends React.PureComponent {
     return (
       <KeyboardAwareScrollView style={styles.container}>
         <View style={styles.logoContainer}>
+          <LinearGradient
+            style={styles.linearGradientHigh}
+            colors={['#FFE4F6', '#ffa5cf']}
+          />
           <Image
-            source={require('../../assets/logo.jpeg')}
+            source={require('../../assets/hearts.png')}
             style={styles.logoStyle}
           />
         </View>
@@ -85,7 +90,7 @@ export default class Login extends React.PureComponent {
                 onChangeText={this.onMailChange}
                 value={mail}
               />
-              <Icon color="#ff8100" name="user-alt" size={20} />
+              <Icon color="#92536E" name="user-alt" size={20} />
             </View>
           </View>
           <View style={styles.row}>
@@ -109,13 +114,17 @@ export default class Login extends React.PureComponent {
                   size={20}
                 />
               </TouchableOpacity>
-              <Icon color="#ff8100" name="key" size={20} />
+              <Icon color="#92536E" name="key" size={20} />
             </View>
           </View>
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={styles.button}
               onPress={this.onSignInPress}>
+              <LinearGradient
+                style={[styles.linearGradient, {borderRadius: 12}]}
+                colors={['#ffa5cf', '#FF5EAB']}
+              />
               <Text style={styles.buttonText}>SIGN IN</Text>
             </TouchableOpacity>
           </View>
@@ -146,6 +155,7 @@ export default class Login extends React.PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFE4F6',
   },
   logoContainer: {
     marginVertical: 40,
@@ -155,8 +165,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   logoStyle: {
-    height: 80,
-    width: 180,
+    height: 100,
+    width: 120,
   },
   form: {
     flex: 1,
@@ -168,7 +178,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'android' ? -10 : 2,
   },
   row: {
-    borderBottomColor: '#ff8100',
+    borderBottomColor: '#92536E',
     borderBottomWidth: 1,
     marginHorizontal: 20,
     paddingHorizontal: 4,
@@ -181,14 +191,14 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    backgroundColor: '#ffa100',
-    borderRadius: 6,
-    paddingVertical: 10,
+    height: 40,
+    borderRadius: 12,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   noButton: {
     width: '100%',
-    paddingVertical: 10,
+    height: 40,
     alignItems: 'center',
   },
   buttonText: {
@@ -197,7 +207,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   linkText: {
-    color: '#ff8100',
+    color: '#92536E',
     fontWeight: 'bold',
   },
   inline: {
@@ -207,5 +217,17 @@ const styles = StyleSheet.create({
   errStyle: {
     color: '#ff0000',
     fontSize: 10,
+  },
+  linearGradient: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: -1,
+  },
+  linearGradientHigh: {
+    width: '100%',
+    height: 140,
+    position: 'absolute',
+    zIndex: -1,
   },
 });

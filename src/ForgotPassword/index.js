@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import validateEmail from '../lib';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default class ForgotPassword extends React.PureComponent {
   constructor(props) {
@@ -34,8 +35,12 @@ export default class ForgotPassword extends React.PureComponent {
     return (
       <View style={styles.container}>
         <View style={styles.logoContainer}>
+          <LinearGradient
+            style={styles.linearGradientHigh}
+            colors={['#FFE4F6', '#ffa5cf']}
+          />
           <Image
-            source={require('../../assets/logo.jpeg')}
+            source={require('../../assets/hearts.png')}
             style={styles.logoStyle}
           />
         </View>
@@ -52,7 +57,7 @@ export default class ForgotPassword extends React.PureComponent {
                 onChangeText={this.onMailChange}
                 value={mail}
               />
-              <Icon color="#ff8100" name="user" size={20} />
+              <Icon color="#92536E" name="user" size={20} />
             </View>
           </View>
           <View style={styles.row}>
@@ -64,7 +69,7 @@ export default class ForgotPassword extends React.PureComponent {
                 onChangeText={this.onMailChange}
                 value={mail}
               />
-              <Icon color="#ff8100" name="envelope" size={20} />
+              <Icon color="#92536E" name="envelope" size={20} />
             </View>
             {mailErrMsg.length > 0 && (
               <Text style={styles.errStyle}>{mailErrMsg}</Text>
@@ -73,6 +78,10 @@ export default class ForgotPassword extends React.PureComponent {
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.button}>
+              <LinearGradient
+                style={[styles.linearGradient, {borderRadius: 12}]}
+                colors={['#ffa5cf', '#FF5EAB']}
+              />
               <Text style={styles.buttonText}>SUBMIT</Text>
             </TouchableOpacity>
           </View>
@@ -85,17 +94,17 @@ export default class ForgotPassword extends React.PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFE4F6',
   },
   logoContainer: {
-    marginVertical: 40,
+    marginVertical: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 90,
     width: '100%',
   },
   logoStyle: {
     height: 80,
-    width: 180,
+    width: 96,
   },
   form: {
     flex: 1,
@@ -107,12 +116,12 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'android' ? -10 : 2,
   },
   row: {
-    borderBottomColor: '#ff8100',
+    borderBottomColor: '#92536E',
     borderBottomWidth: 1,
     marginHorizontal: 20,
     paddingHorizontal: 4,
     paddingBottom: 4,
-    marginBottom: 30,
+    marginBottom: 10,
   },
   buttonRow: {
     flexDirection: 'row',
@@ -121,9 +130,9 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    backgroundColor: '#ffa100',
-    borderRadius: 6,
-    paddingVertical: 10,
+    justifyContent: 'center',
+    borderRadius: 12,
+    height: 40,
     alignItems: 'center',
   },
   buttonText: {
@@ -137,5 +146,17 @@ const styles = StyleSheet.create({
   errStyle: {
     color: '#ff0000',
     fontSize: 10,
+  },
+  linearGradient: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: -1,
+  },
+  linearGradientHigh: {
+    width: '100%',
+    height: 120,
+    position: 'absolute',
+    zIndex: -1,
   },
 });

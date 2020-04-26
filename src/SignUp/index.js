@@ -3,6 +3,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   View,
+  Image,
   Text,
   TextInput,
   Platform,
@@ -91,65 +92,13 @@ export default class SignUp extends React.PureComponent {
       id,
     } = this.state;
     return (
-      <View style={styles.container}>
+      <View style={styles.flex1}>
         <LinearGradient
           style={styles.linearGradient}
-          colors={['#FFF6FB', '#FFE4F6']}
+          colors={['#FFE4F6', '#ffa5cf']}
         />
-        <KeyboardAwareScrollView
-          style={{
-            flex: 1,
-            marginBottom: -90,
-          }}>
+        <KeyboardAwareScrollView style={styles.flex1}>
           <View style={styles.form}>
-            <View style={styles.row1}>
-              <View style={styles.inline}>
-                <TextInput
-                  ref={input => (this.firstName = input)}
-                  style={[styles.formInputUnderlined, {marginRight: 16}]}
-                  placeholder="First Name"
-                  onChangeText={this.onFirstNameChange}
-                  value={firstName}
-                />
-                <TextInput
-                  ref={input => (this.lastName = input)}
-                  style={styles.formInputUnderlined}
-                  placeholder="Last Name"
-                  onChangeText={this.onLastNameChange}
-                  value={lastName}
-                />
-              </View>
-            </View>
-            <View style={styles.row1}>
-              <View style={styles.inline}>
-                <TextInput
-                  ref={input => (this.branch = input)}
-                  style={[styles.formInputUnderlined, {marginRight: 16}]}
-                  placeholder="Branch"
-                  onChangeText={this.onBranchChange}
-                  value={branch}
-                />
-                <TextInput
-                  ref={input => (this.dob = input)}
-                  style={styles.formInputUnderlined}
-                  placeholder="DOB"
-                  onChangeText={this.onDobChange}
-                  value={dob}
-                />
-              </View>
-            </View>
-            <View style={styles.row}>
-              <View style={styles.inline}>
-                <TextInput
-                  ref={input => (this.id = input)}
-                  style={styles.formInput}
-                  placeholder="Student ID"
-                  onChangeText={this.onIdChange}
-                  value={id}
-                />
-                <Icon color="#ff8100" name="user" size={20} />
-              </View>
-            </View>
             <View style={styles.row}>
               {mailErrMsg.length > 0 && (
                 <Text style={styles.errStyle}>{mailErrMsg}</Text>
@@ -162,7 +111,7 @@ export default class SignUp extends React.PureComponent {
                   onChangeText={this.onMailChange}
                   value={mail}
                 />
-                <Icon color="#ff8100" name="envelope" size={20} />
+                <Icon color="#92536E" name="envelope" size={20} />
               </View>
             </View>
             <View style={styles.row}>
@@ -186,7 +135,34 @@ export default class SignUp extends React.PureComponent {
                     size={20}
                   />
                 </TouchableOpacity>
-                <Icon color="#ff8100" name="key" size={20} />
+                <Icon color="#92536E" name="key" size={20} />
+              </View>
+              {passErrMsg.length > 0 && (
+                <Text style={styles.errStyle}>{passErrMsg}</Text>
+              )}
+            </View>
+            <View style={styles.row}>
+              {passErrMsg.length > 0 && (
+                <Text style={styles.errStyle}>{passErrMsg}</Text>
+              )}
+              <View style={styles.inline}>
+                <TextInput
+                  ref={input => (this.passowrd = input)}
+                  style={styles.formInput}
+                  placeholder="Confirm Password"
+                  secureTextEntry={!isPassVisible}
+                  onChangeText={this.onPassChange}
+                  value={password}
+                />
+                <TouchableOpacity onPress={this.onEyePress}>
+                  <Icon
+                    style={{marginRight: 10}}
+                    color={password.length > 0 ? 'black' : 'grey'}
+                    name={isPassVisible ? 'eye' : 'eye-slash'}
+                    size={20}
+                  />
+                </TouchableOpacity>
+                <Icon color="#92536E" name="key" size={20} />
               </View>
               {passErrMsg.length > 0 && (
                 <Text style={styles.errStyle}>{passErrMsg}</Text>
@@ -194,8 +170,18 @@ export default class SignUp extends React.PureComponent {
             </View>
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.button}>
+                <LinearGradient
+                  style={[styles.linearGradient, {borderRadius: 12}]}
+                  colors={['#ffa5cf', '#FF5EAB']}
+                />
                 <Text style={styles.buttonText}>SIGN UP</Text>
               </TouchableOpacity>
+            </View>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('../../assets/hearts.png')}
+                style={styles.logoStyle}
+              />
             </View>
           </View>
         </KeyboardAwareScrollView>
@@ -205,7 +191,7 @@ export default class SignUp extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  flex1: {
     flex: 1,
   },
   form: {
@@ -218,7 +204,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'android' ? -10 : 2,
   },
   row: {
-    borderBottomColor: '#ff8100',
+    borderBottomColor: '#92536E',
     borderBottomWidth: 1,
     marginHorizontal: 20,
     paddingHorizontal: 4,
@@ -236,9 +222,9 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    backgroundColor: '#ffa100',
-    borderRadius: 6,
-    paddingVertical: 10,
+    borderRadius: 12,
+    height: 40,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
@@ -267,5 +253,16 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'absolute',
     zIndex: -1,
+  },
+  logoStyle: {
+    height: 100,
+    width: 120,
+  },
+  logoContainer: {
+    marginVertical: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 90,
+    width: '100%',
   },
 });

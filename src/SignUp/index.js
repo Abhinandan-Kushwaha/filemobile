@@ -147,7 +147,7 @@ export default class SignUp extends React.PureComponent {
                   onChangeText={this.onIdChange}
                   value={id}
                 />
-                <Icon color="#ff8100" name="user" size={20} />
+                <Icon color="#92536E" name="user-alt" size={20} />
               </View>
             </View>
             <View style={styles.row}>
@@ -162,7 +162,7 @@ export default class SignUp extends React.PureComponent {
                   onChangeText={this.onMailChange}
                   value={mail}
                 />
-                <Icon color="#ff8100" name="envelope" size={20} />
+                <Icon color="#92536E" name="envelope" size={20} />
               </View>
             </View>
             <View style={styles.row}>
@@ -186,7 +186,7 @@ export default class SignUp extends React.PureComponent {
                     size={20}
                   />
                 </TouchableOpacity>
-                <Icon color="#ff8100" name="key" size={20} />
+                <Icon color="#92536E" name="key" size={20} />
               </View>
               {passErrMsg.length > 0 && (
                 <Text style={styles.errStyle}>{passErrMsg}</Text>
@@ -194,6 +194,10 @@ export default class SignUp extends React.PureComponent {
             </View>
             <View style={styles.buttonRow}>
               <TouchableOpacity style={styles.button}>
+                <LinearGradient
+                  style={[styles.linearGradient, {borderRadius: 12}]}
+                  colors={['#ffa5cf', '#FF5EAB']}
+                />
                 <Text style={styles.buttonText}>SIGN UP</Text>
               </TouchableOpacity>
             </View>
@@ -218,7 +222,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'android' ? -10 : 2,
   },
   row: {
-    borderBottomColor: '#ff8100',
+    borderBottomColor: '#92536E',
     borderBottomWidth: 1,
     marginHorizontal: 20,
     paddingHorizontal: 4,
@@ -236,7 +240,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    backgroundColor: '#ffa100',
+    height: 60,
     borderRadius: 6,
     paddingVertical: 10,
     alignItems: 'center',
@@ -257,7 +261,7 @@ const styles = StyleSheet.create({
   formInputUnderlined: {
     flex: 1,
     fontSize: 16,
-    borderBottomColor: '#ff8100',
+    borderBottomColor: '#92536E',
     borderBottomWidth: 1,
     paddingLeft: 4,
     paddingBottom: Platform.OS === 'android' ? -10 : 2,

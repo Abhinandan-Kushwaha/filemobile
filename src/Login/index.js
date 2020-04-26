@@ -60,7 +60,7 @@ export default class Login extends React.PureComponent {
 
   onSignInPress = () => {
     const {navigation} = this.props;
-    navigation.navigate('Stories');
+    navigation.navigate('Catalogue');
     //navigation.navigate('Home');
   };
   render() {

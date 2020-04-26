@@ -4,10 +4,13 @@ import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import createDrawerNavigator from 'react-navigation-drawer';
 import {View, Image, Button, StyleSheet} from 'react-native';
 import Home from '../src/Home';
+import Profile from '../src/Profile';
 import Login from '../src/Login';
+import Issue from '../src/Issue';
 import ForgotPassword from '../src/ForgotPassword';
 import SignUp from '../src/SignUp';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const HomeStack = createStackNavigator({
   Home: {
@@ -18,6 +21,8 @@ const HomeStack = createStackNavigator({
       headerTitle: 'Self Issueing Master File Shelf',
     },
   },
+  Profile: {screen: Profile},
+  Issue: {screen: Issue},
 });
 
 const AuthStack = createStackNavigator({
@@ -45,33 +50,46 @@ const AuthStack = createStackNavigator({
 });
 
 const AppStack = createBottomTabNavigator({
-  Stories: {
+  Catalogue: {
     screen: Home,
     navigationOptions: {
-      headerStyle: {backgroundColor: '#ff8100'},
-      headerTintColor: '#710035',
-      headerTitle: 'Stories',
+      tabBarLabel: 'Catalogue',
+      tabBarIcon: ({focused}) => (
+        <Icon
+          name="shopping-cart"
+          size={24}
+          focused={focused}
+          color={focused ? '#da5360' : 'gray'}
+        />
+      ),
     },
   },
-  Gallery: {
-    screen: Login,
+  Issue: {
+    screen: Issue,
     navigationOptions: {
-      headerTintColor: '#710035',
-      headerTitle: 'Gallery',
-    },
-  },
-  Upload: {
-    screen: ForgotPassword,
-    navigationOptions: {
-      headerTintColor: '#710035',
-      headerTitle: 'Upload',
+      tabBarLabel: 'Issue',
+      tabBarIcon: ({focused}) => (
+        <Icon
+          name="book"
+          size={24}
+          focused={focused}
+          color={focused ? '#da5360' : 'gray'}
+        />
+      ),
     },
   },
   Profile: {
-    screen: SignUp,
+    screen: Profile,
     navigationOptions: {
-      headerTintColor: '#710035',
-      headerTitle: 'Profile',
+      tabBarLabel: 'Profile',
+      tabBarIcon: ({focused}) => (
+        <Icon
+          name="user-alt"
+          size={24}
+          focused={focused}
+          color={focused ? '#da5360' : 'gray'}
+        />
+      ),
     },
   },
 });

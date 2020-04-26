@@ -167,34 +167,31 @@ export default class Home extends React.PureComponent {
   };
 
   validateData = () => {
-    let {code, issueDate, returnDate, copies} = this.state;
+    let {code, issueDate, returnDate} = this.state;
     code = parseInt(code + '');
-    copies = parseInt(copies + '');
     let column = code % 10;
     let row = code / 10;
-    if (code && issueDate && returnDate && copies) {
+    if (code && issueDate && returnDate) {
       if (column >= 1 && column <= 3 && row >= 1 && row <= 4) {
         //code validated
-        if (copies > 5) {
-          Alert.alert('Maximum 5 copies allowed');
+
+        let startTime = issueDate.getTime();
+        let endTime = returnDate.getTime();
+
+        let allowedTime = 7 * 24 * 60 * 60 * 1000; //7 days (in milliseconds)
+
+        if (endTime <= startTime) {
+          Alert.alert('Return Date must lie after Issue Date!!');
+          return false;
+        } else if (endTime - startTime > allowedTime) {
+          Alert.alert(
+            'Books can be issued for a maximum duration of 7 days only!!',
+          );
           return false;
         } else {
-          let startTime = issueDate.getTime();
-          let endTime = returnDate.getTime();
-
-          let allowedTime = 7 * 24 * 60 * 60 * 1000; //7 days (in milliseconds)
-
-          if (endTime <= startTime) {
-            Alert.alert('Return Date must lie after Issue Date!!');
-            return false;
-          } else if (endTime - startTime > allowedTime) {
-            Alert.alert(
-              'Books can be issued for a maximum duration of 7 days only!!',
-            );
-            return false;
-          } else {
-            return true;
-          }
+          Alert.alert('All good! Your Book can be issued now!');
+          this.setState({popupVisible: false});
+          return true;
         }
       } else {
         Alert.alert('Inavalid code!! Please retry.');
@@ -234,16 +231,11 @@ export default class Home extends React.PureComponent {
     this.setState({code});
   };
 
-  onCopiesChange = copies => {
-    this.setState({copies});
-  };
-
   renderPopup = () => {
     const {
       issueDate,
       returnDate,
       code,
-      copies,
       currentImg,
       currentTitle,
       currentAuthor,
@@ -270,14 +262,8 @@ export default class Home extends React.PureComponent {
                   placeholder="Enter your Code here"
                   value={code}
                   onChangeText={this.onCodeChange}
-                />
-              </View>
-              <View style={styles.row}>
-                <TextInput
-                  style={{marginBottom: -14, marginTop: -20}}
-                  placeholder="Enter Number of copies"
-                  value={copies}
-                  onChangeText={this.onCopiesChange}
+                  keyboardType="numeric"
+                  maxLength={2}
                 />
               </View>
               <TouchableOpacity
@@ -290,18 +276,16 @@ export default class Home extends React.PureComponent {
                   </Text>
                 </View>
               </TouchableOpacity>
-              {issueDate && (
-                <TouchableOpacity
-                  onPress={this.returnDatePressed}
-                  style={styles.row}>
-                  <View style={styles.flexRow}>
-                    <Text>Return Date : </Text>
-                    <Text style={styles.selectText}>
-                      {returnDate ? this.getDateAndTime(returnDate) : 'Select'}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                onPress={this.returnDatePressed}
+                style={styles.row}>
+                <View style={styles.flexRow}>
+                  <Text>Return Date : </Text>
+                  <Text style={styles.selectText}>
+                    {returnDate ? this.getDateAndTime(returnDate) : 'Select'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -361,11 +345,11 @@ export default class Home extends React.PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFE4F6',
+    backgroundColor: '#92536E',
   },
   containerBlurred: {
     flex: 1,
-    backgroundColor: '#FFE4F6',
+    backgroundColor: '#92536E',
     opacity: 0.3,
   },
   logoContainer: {
@@ -416,7 +400,7 @@ const styles = StyleSheet.create({
   catalogueItemContainer: {
     backgroundColor: '#ffa5cf',
     flexDirection: 'row',
-    borderColor: '#92536E',
+    borderColor: '#fff2fa',
     borderWidth: 2,
     borderRadius: 10,
     margin: 8,
@@ -471,10 +455,10 @@ const styles = StyleSheet.create({
   },
   close: {
     position: 'absolute',
-    top: 2,
-    right: 3,
-    height: 20,
-    width: 20,
+    top: 1,
+    right: 1,
+    height: 24,
+    width: 24,
     zIndex: 1,
   },
   popupBody: {

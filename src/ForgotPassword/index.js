@@ -40,7 +40,7 @@ export default class ForgotPassword extends React.PureComponent {
             colors={['#FFE4F6', '#ffa5cf']}
           />
           <Image
-            source={require('../../assets/hearts.png')}
+            source={require('../../assets/logo.jpeg')}
             style={styles.logoStyle}
           />
         </View>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   logoStyle: {
     height: 80,
-    width: 96,
+    width: 176,
   },
   form: {
     flex: 1,

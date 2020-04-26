@@ -73,7 +73,7 @@ export default class Login extends React.PureComponent {
             colors={['#FFE4F6', '#ffa5cf']}
           />
           <Image
-            source={require('../../assets/hearts.png')}
+            source={require('../../assets/logo.jpeg')}
             style={styles.logoStyle}
           />
         </View>
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   logoStyle: {
     height: 100,
-    width: 120,
+    width: 220,
   },
   form: {
     flex: 1,

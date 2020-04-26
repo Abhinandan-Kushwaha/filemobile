@@ -25,21 +25,21 @@ const AuthStack = createStackNavigator({
     screen: Login,
     navigationOptions: {
       headerTintColor: '#710035',
-      headerTitle: 'KaamBook (मधुर कथाएं)',
+      headerTitle: 'Self Issueing Master File Shelf',
     },
   },
   ForgotPassword: {
     screen: ForgotPassword,
     navigationOptions: {
       headerTintColor: '#710035',
-      headerTitle: 'KaamBook (मधुर कथाएं)',
+      headerTitle: 'Self Issueing Master File Shelf',
     },
   },
   SignUp: {
     screen: SignUp,
     navigationOptions: {
       headerTintColor: '#710035',
-      headerTitle: 'KaamBook (मधुर कथाएं)',
+      headerTitle: 'Self Issueing Master File Shelf',
     },
   },
 });

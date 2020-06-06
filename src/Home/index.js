@@ -7,115 +7,50 @@ import {
   Text,
   TextInput,
   Alert,
+  AsyncStorage,
   FlatList,
 } from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import {getImagePath} from '../lib';
 
 export default class Home extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      catalogueData: [
-        {
-          img: require('../../assets/b1.jpeg'),
-          title: 'FIB 20103 Occupational Safety and Health',
-          author: 'Mr Yusuf',
-          isbn: '9336606401',
-          code: 11,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b2.jpeg'),
-          title: 'FKB 1103 Applied Calculus',
-          author: 'Madam Axniab',
-          isbn: '9336606402',
-          code: 12,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b3.jpeg'),
-          title: 'FIB 12303 Material Science',
-          author: 'Madam Axwani',
-          isbn: '9336606403',
-          code: 13,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b4.jpeg'),
-          title: 'FIB 11203 Automation Technology',
-          author: 'Mr Zulkhairi',
-          isbn: '9336606404',
-          code: 14,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b5.jpeg'),
-          title: 'FAB 20703 Robotics',
-          author: 'Mr Amir Sharizam',
-          isbn: '9336606405',
-          code: 21,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b6.jpeg'),
-          title: 'FAB 35803 Control System',
-          author: 'Madam Murni',
-          isbn: '9336606406',
-          code: 22,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b7.jpeg'),
-          title: 'FAB 30104 Mechatronics System Design',
-          author: 'Madam Siti Khadija',
-          isbn: '9336606407',
-          code: 23,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b8.jpeg'),
-          title: 'FMB 70503 Mechanics and Machine Design',
-          author: 'Mr Azwan',
-          isbn: '9336606408',
-          code: 24,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b9.jpeg'),
-          title: 'FIB 42203 Industrial Ergonomics',
-          author: 'Mr Yusuf',
-          isbn: '9336606409',
-          code: 31,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b10.jpg'),
-          title: 'FAB 30303 Mobile Robotics',
-          author: 'Mr Taha',
-          isbn: '9336606410',
-          code: 32,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b11.jpeg'),
-          title: 'FAB 30403 Modern Control',
-          author: 'Mr Fadzil',
-          isbn: '9336606410',
-          code: 33,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b12.jpg'),
-          title: 'FAB 40104 Automated System Diagnostic and Maintaenance',
-          author: 'Mr Amir Sharizamam',
-          isbn: '9336606410',
-          code: 34,
-          copies: 5,
-        },
-      ],
+      catalogueData: [],
     };
   }
+
+  componentWillReceiveProps = () => {
+    this.loadBooks();
+  };
+
+  componentWillMount = () => {
+    this.loadBooks();
+  };
+
+  loadBooks = async () => {
+    try {
+      let catalogueData = [];
+      const res = await firestore()
+        .collection('books')
+        .get();
+
+      if (!res.empty) {
+        res._docs.forEach(doc => {
+          const {code} = doc.data();
+          let book = doc.data();
+          book.img = getImagePath(code);
+          catalogueData.push(book);
+        });
+        this.setState({catalogueData});
+      }
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
 
   getDateAndTime = date => {
     return (
@@ -132,7 +67,7 @@ export default class Home extends React.PureComponent {
     );
   };
 
-  bookItemPressed = (img, title, author, isbn, copies) => {
+  bookItemPressed = (img, title, author, isbn, copies, code) => {
     this.setState({
       popupVisible: true,
       currentImg: img,
@@ -140,15 +75,18 @@ export default class Home extends React.PureComponent {
       currentAuthor: author,
       currentIsbn: isbn,
       currentCopies: copies,
+      currentCode: code,
     });
   };
 
   renderCatalogue = item => {
     const {popupVisible} = this.state;
-    const {img, title, author, isbn, copies} = item.item;
+    const {img, title, author, isbn, copies, code} = item.item;
     return (
       <TouchableOpacity
-        onPress={() => this.bookItemPressed(img, title, author, isbn, copies)}
+        onPress={() =>
+          this.bookItemPressed(img, title, author, isbn, copies, code)
+        }
         disabled={popupVisible}
         style={styles.catalogueItemContainer}>
         <Image style={styles.bookCover} source={item.item.img} />
@@ -166,7 +104,7 @@ export default class Home extends React.PureComponent {
     );
   };
 
-  validateData = () => {
+  validateData = async () => {
     let {code, issueDate, returnDate} = this.state;
     code = parseInt(code + '');
     let column = code % 10;
@@ -189,9 +127,59 @@ export default class Home extends React.PureComponent {
           );
           return false;
         } else {
-          Alert.alert('All good! Your Book can be issued now!');
-          this.setState({popupVisible: false});
-          return true;
+          const {currentCode} = this.state;
+          console.log('currentCode', currentCode);
+          console.log('code', code);
+          if (currentCode == code) {
+            const bookRes = await firestore()
+              .collection('books')
+              .doc(currentCode)
+              .get();
+            let {copies} = bookRes.data();
+            if (copies > 0) {
+              const res = await AsyncStorage.getItem('profileInfo');
+              const profileInfo = JSON.parse(res);
+              const {id} = profileInfo;
+              const accRes = await firestore()
+                .collection('accounts')
+                .doc(id)
+                .get();
+
+              const {booksIssued} = accRes.data();
+              if (booksIssued && booksIssued.includes(currentCode)) {
+                Alert.alert('You have already issued this book!');
+                return false;
+              }
+              Alert.alert('All good! Your Book is issued!');
+              await firestore()
+                .collection('books')
+                .doc(currentCode)
+                .update({
+                  copies: copies - 1,
+                });
+              await firestore()
+                .collection('accounts')
+                .doc(id)
+                .update({
+                  booksIssued: firebase.firestore.FieldValue.arrayUnion(
+                    currentCode,
+                  ),
+                });
+              this.loadBooks();
+            } else {
+              Alert.alert('Sorry! This book is not available currently');
+            }
+            this.setState({
+              popupVisible: false,
+              code: '',
+              issueDate: '',
+              returnDate: '',
+            });
+            return true;
+          } else {
+            Alert.alert('The code you entered is incorrect!');
+            return false;
+          }
         }
       } else {
         Alert.alert('Inavalid code!! Please retry.');
@@ -208,7 +196,12 @@ export default class Home extends React.PureComponent {
   };
 
   closePressed = () => {
-    this.setState({popupVisible: false});
+    this.setState({
+      popupVisible: false,
+      code: '',
+      issueDate: '',
+      returnDate: '',
+    });
   };
 
   issueDatePressed = () => {
@@ -241,6 +234,7 @@ export default class Home extends React.PureComponent {
       currentAuthor,
       currentIsbn,
     } = this.state;
+    console.log('code', code);
     return (
       <View style={styles.popupContainer}>
         <TouchableOpacity style={styles.close} onPress={this.closePressed}>

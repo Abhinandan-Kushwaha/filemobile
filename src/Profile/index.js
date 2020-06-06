@@ -6,51 +6,95 @@ import {
   Image,
   Text,
   Alert,
+  AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import LinearGradient from 'react-native-linear-gradient';
 import {FlatList} from 'react-native-gesture-handler';
+import firestore, {firebase} from '@react-native-firebase/firestore';
+import {getImagePath} from '../lib';
 
 export default class SignUp extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      mail: 'atif@gmail.com',
-      firstName: 'Atif',
-      lastName: 'Ansari',
-      branch: 'Mechatronics Engg',
-      dob: '12/12/1996',
-      id: '12212',
-      catalogueData: [
-        {
-          img: require('../../assets/b1.jpeg'),
-          title: 'FIB 20103 Occupational Safety and Health',
-          author: 'Mr Yusuf',
-          isbn: '9336606401',
-          code: 11,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b2.jpeg'),
-          title: 'FKB 1103 Applied Calculus',
-          author: 'Madam Axniab',
-          isbn: '9336606402',
-          code: 12,
-          copies: 5,
-        },
-        {
-          img: require('../../assets/b3.jpeg'),
-          title: 'FIB 12303 Material Science',
-          author: 'Madam Axwani',
-          isbn: '9336606403',
-          code: 13,
-          copies: 5,
-        },
-      ],
+      mail: '',
+      firstName: '',
+      lastName: '',
+      branch: '',
+      dob: '',
+      id: '',
+      catalogueData: [],
     };
   }
+  componentWillMount = async () => {
+    try {
+      const res = await AsyncStorage.getItem('profileInfo');
+      const profileInfo = JSON.parse(res);
+      if (profileInfo) {
+        const {id, mail, firstName, lastName, branch, dob} = profileInfo;
+        this.setState({
+          id,
+          mail,
+          firstName,
+          lastName,
+          branch,
+          dob,
+        });
+        this.loadIssuedBooks(id);
+      }
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+  loadIssuedBooks = async id => {
+    try {
+      const accRes = await firestore()
+        .collection('accounts')
+        .doc(id)
+        .get();
+
+      const {booksIssued} = accRes.data();
+      let catalogueData = [];
+      booksIssued.forEach(async bookId => {
+        const bookRes = await firestore()
+          .collection('books')
+          .doc(bookId)
+          .get();
+
+        console.log('bookRes', bookRes);
+
+        const {code} = bookRes.data();
+        let book = bookRes.data();
+        book.img = getImagePath(code);
+        catalogueData.push(book);
+        this.setState({catalogueData});
+      });
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+  returnPressed = async (code, copies) => {
+    console.log('......code');
+    const {id} = this.state;
+    await firestore()
+      .collection('accounts')
+      .doc(id)
+      .update({
+        booksIssued: firebase.firestore.FieldValue.arrayRemove(code),
+      });
+
+    await firestore()
+      .collection('books')
+      .doc(code)
+      .update({
+        copies: copies + 1,
+      });
+    this.loadIssuedBooks(id);
+  };
+
   renderCatalogue = item => {
-    const {img, title, author, isbn, copies} = item.item;
+    const {img, title, author, isbn, copies, code} = item.item;
     return (
       <View style={styles.catalogueItemContainer}>
         <Image style={styles.bookCover} source={img} />
@@ -58,10 +102,12 @@ export default class SignUp extends React.PureComponent {
           <Text style={styles.bookTitle}>{title}</Text>
           <Text style={styles.bookDetails}>{'Author: ' + author}</Text>
           <Text style={styles.bookDetails}>{'ISBN: ' + isbn}</Text>
-          <Text style={styles.availableText}>{copies + ' copies issued'}</Text>
+          <Text style={styles.availableText}>
+            {copies + ' copies available'}
+          </Text>
           <TouchableOpacity
             style={styles.returnButton}
-            onPress={() => Alert.alert('Returned')}>
+            onPress={() => this.returnPressed(code, copies)}>
             <Text style={styles.returnText}>Return</Text>
           </TouchableOpacity>
         </View>
@@ -125,7 +171,11 @@ export default class SignUp extends React.PureComponent {
           </TouchableOpacity>
         </View>
         <Text style={styles.booksIssuedHeader}>Books Issued :</Text>
-        <FlatList data={catalogueData} renderItem={this.renderCatalogue} />
+        {catalogueData.length === 0 ? (
+          <Text style={styles.booksIssuedHeader}>No Books Issued</Text>
+        ) : (
+          <FlatList data={catalogueData} renderItem={this.renderCatalogue} />
+        )}
       </View>
     );
   }

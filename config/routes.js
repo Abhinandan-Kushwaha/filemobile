@@ -56,7 +56,7 @@ const AppStack = createBottomTabNavigator({
       tabBarLabel: 'Catalogue',
       tabBarIcon: ({focused}) => (
         <Icon
-          name="shopping-cart"
+          name="th-list"
           size={24}
           focused={focused}
           color={focused ? '#da5360' : 'gray'}

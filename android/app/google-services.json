@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "466891414203",
+    "firebase_url": "https://library-app-65089.firebaseio.com",
+    "project_id": "library-app-65089",
+    "storage_bucket": "library-app-65089.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466891414203:android:47a026b9c3ab09267ea79e",
+        "android_client_info": {
+          "package_name": "com.filemobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "466891414203-329gtb2h4tluc4speejp1mhfceo8lq46.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAI5H0Mq4ts_2TZrr3S8ajqc1-5YysHjDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "466891414203-329gtb2h4tluc4speejp1mhfceo8lq46.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

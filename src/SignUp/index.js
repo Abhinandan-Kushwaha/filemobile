@@ -6,11 +6,15 @@ import {
   Text,
   TextInput,
   Platform,
+  Alert,
+  AsyncStorage,
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import validateEmail from '../lib';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore';
+import Loader from '../components/Loader';
 
 export default class SignUp extends React.PureComponent {
   constructor(props) {
@@ -26,6 +30,7 @@ export default class SignUp extends React.PureComponent {
       branch: '',
       dob: '',
       id: '',
+      loading: false,
     };
   }
 
@@ -73,10 +78,100 @@ export default class SignUp extends React.PureComponent {
     this.setState({dob: dob});
   };
 
-  onForgotPasswordPress = () => {
-    const {navigation} = this.props;
-    navigation.navigate('ForgotPassword');
+  validateFields = () => {
+    const {firstName, lastName, branch, dob, id, mail, password} = this.state;
+    if (!firstName) {
+      Alert.alert('Please enter first name!');
+      return false;
+    }
+    if (!lastName) {
+      Alert.alert('Please enter last name!');
+      return false;
+    }
+    if (!branch) {
+      Alert.alert('Please enter branch!');
+      return false;
+    }
+    if (!dob) {
+      Alert.alert('Please enter date of birth!');
+      return false;
+    }
+    if (!id) {
+      Alert.alert('Please enter student ID!');
+      return false;
+    }
+    if (!mail || !validateEmail(mail)) {
+      Alert.alert('Invalid Email!! ' + mail);
+      return false;
+    }
+    if (!password || password.length < 6) {
+      Alert.alert('Password must be at least 6 characters long!');
+      return false;
+    }
+    return true;
   };
+
+  onSignUpPress = async () => {
+    try {
+      if (this.validateFields()) {
+        this.setState({loading: true});
+        const {id, mail} = this.state;
+        const res = await firestore()
+          .collection('accounts')
+          .doc(id)
+          .get();
+
+        if (res.data()) {
+          Alert.alert('The id ' + id + ' is already taken!');
+        } else {
+          const mailRes = await firestore()
+            .collection('accounts')
+            .where('mail', '==', mail)
+            .get();
+
+          if (!mailRes.empty) {
+            Alert.alert('The email ' + mail + ' is already taken!');
+          } else {
+            const {firstName, lastName, branch, dob, password} = this.state;
+            const {navigation} = this.props;
+            await firestore()
+              .collection('accounts')
+              .doc(id)
+              .set({
+                id,
+                mail,
+                firstName,
+                lastName,
+                branch,
+                dob,
+                password,
+              });
+            const profileInfo = {
+              id,
+              mail,
+              firstName,
+              lastName,
+              branch,
+              dob,
+            };
+            try {
+              await AsyncStorage.setItem(
+                'profileInfo',
+                JSON.stringify(profileInfo),
+              );
+            } catch (err) {
+              console.log('err', err);
+            }
+            navigation.navigate('Catalogue');
+          }
+        }
+      }
+      this.setState({loading: false});
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+
   render() {
     const {
       mailErrMsg,
@@ -89,6 +184,7 @@ export default class SignUp extends React.PureComponent {
       branch,
       dob,
       id,
+      loading,
     } = this.state;
     return (
       <View style={styles.container}>
@@ -193,7 +289,9 @@ export default class SignUp extends React.PureComponent {
               )}
             </View>
             <View style={styles.buttonRow}>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity
+                onPress={this.onSignUpPress}
+                style={styles.button}>
                 <LinearGradient
                   style={[styles.linearGradient, {borderRadius: 12}]}
                   colors={['#ffa5cf', '#FF5EAB']}
@@ -202,6 +300,7 @@ export default class SignUp extends React.PureComponent {
               </TouchableOpacity>
             </View>
           </View>
+          {loading && <Loader />}
         </KeyboardAwareScrollView>
       </View>
     );

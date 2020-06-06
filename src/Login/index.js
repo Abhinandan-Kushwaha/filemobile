@@ -7,21 +7,25 @@ import {
   Text,
   TextInput,
   Platform,
+  Alert,
+  AsyncStorage,
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import validateEmail from '../lib';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore';
+import Loader from '../components/Loader';
 
 export default class Login extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      mailErrMsg: '',
+      idErrMsg: '',
       passErrMsg: '',
       mail: '',
       password: '',
       isPassVisible: false,
+      loading: false,
     };
   }
 
@@ -30,13 +34,13 @@ export default class Login extends React.PureComponent {
     this.setState({isPassVisible: !isPassVisible});
   };
 
-  onMailChange = mail => {
-    this.setState({mail: mail});
+  onIdChange = id => {
+    this.setState({id});
     //console.log('mail', this.mail.props.value);
-    if (!mail || validateEmail(mail)) {
-      this.setState({mailErrMsg: ''});
+    if (!id) {
+      this.setState({idErrMsg: 'Please enter id'});
     } else {
-      this.setState({mailErrMsg: 'Please enter a valid email'});
+      this.setState({idErrMsg: ''});
     }
   };
 
@@ -58,13 +62,60 @@ export default class Login extends React.PureComponent {
     navigation.navigate('SignUp');
   };
 
-  onSignInPress = () => {
-    const {navigation} = this.props;
-    navigation.navigate('Catalogue');
-    //navigation.navigate('Home');
+  onSignInPress = async () => {
+    const {id, password} = this.state;
+    if (!id) {
+      Alert.alert('Please enter student ID');
+      return;
+    }
+    if (!password || password.length < 6) {
+      Alert.alert('Password must be at least 6 characters long!');
+      return;
+    }
+    this.setState({loading: true});
+    const res = await firestore()
+      .collection('accounts')
+      .doc(id)
+      .get();
+
+    if (!res.data()) {
+      this.setState({loading: false});
+      Alert.alert('Student with ID ' + id + ' not found');
+      return;
+    }
+    this.setState({loading: false});
+    const firePassword = res.data().password;
+    if (password === firePassword) {
+      const {firstName, lastName, branch, dob, mail} = res.data();
+      const profileInfo = {
+        id,
+        mail,
+        firstName,
+        lastName,
+        branch,
+        dob,
+      };
+      try {
+        await AsyncStorage.setItem('profileInfo', JSON.stringify(profileInfo));
+      } catch (err) {
+        console.log('err', err);
+      }
+      const {navigation} = this.props;
+      navigation.navigate('Catalogue');
+    } else {
+      Alert.alert('Wrong password!');
+      return;
+    }
   };
   render() {
-    const {mailErrMsg, passErrMsg, mail, password, isPassVisible} = this.state;
+    const {
+      idErrMsg,
+      passErrMsg,
+      id,
+      password,
+      isPassVisible,
+      loading,
+    } = this.state;
     return (
       <KeyboardAwareScrollView style={styles.container}>
         <View style={styles.logoContainer}>
@@ -79,16 +130,16 @@ export default class Login extends React.PureComponent {
         </View>
         <View style={styles.form}>
           <View style={styles.row}>
-            {mailErrMsg.length > 0 && (
-              <Text style={styles.errStyle}>{mailErrMsg}</Text>
+            {idErrMsg.length > 0 && (
+              <Text style={styles.errStyle}>{idErrMsg}</Text>
             )}
             <View style={styles.inline}>
               <TextInput
-                ref={input => (this.mail = input)}
+                ref={input => (this.id = input)}
                 style={styles.formInput}
                 placeholder="Student ID"
-                onChangeText={this.onMailChange}
-                value={mail}
+                onChangeText={this.onIdChange}
+                value={id}
               />
               <Icon color="#92536E" name="user-alt" size={20} />
             </View>
@@ -99,7 +150,7 @@ export default class Login extends React.PureComponent {
             )}
             <View style={styles.inline}>
               <TextInput
-                ref={input => (this.passowrd = input)}
+                ref={input => (this.password = input)}
                 style={styles.formInput}
                 placeholder="Password"
                 secureTextEntry={!isPassVisible}
@@ -147,6 +198,7 @@ export default class Login extends React.PureComponent {
             </View>
           </TouchableOpacity>
         </View>
+        {loading && <Loader />}
       </KeyboardAwareScrollView>
     );
   }
